@@ -1,46 +1,44 @@
 class Search extends React.Component {
-  /*
     constructor(props) {
-    super(props);
-
-    const query = `
-        query search($q: String!){
+        super(props);
+        const query = `query search($q: String!){
             searchTracks(q: $q) {
                 collection {
-                title,
-                permalinkUrl,
-                artworkUrl
+                    title,
+                    permalinkUrl,
+                    artworkUrl
                 }
             },
             searchUsers(q: $q) {
                 collection {
-                username,
-                avatarUrl,
-                permalinkUrl
+                    username,
+                    avatarUrl,
+                    permalinkUrl
                 }
             },
             searchPlaylists(q:$q) {
                 collection {
-                title,
-                permalinkUrl,
-                artworkUrl
+                    title,
+                    permalinkUrl,
+                    artworkUrl
                 }
             }
         }`
-    this.state = {
-        data: props.data,
-      fetcher: props.fetcher,
-      searchBox: props.searchBox,
-      resultList: props.resultList,
-      query
+        this.state = {
+            query,
+            q: ''
+        }
     }
-  }
-  */
+
+    search(query) {
+        this.state.q = query.q;
+        this.props.fetcher({query: this.state.query, variables: {q: this.state.q}}).then(json => console.log(json));
+    }
 
   render() {
     return (
       <div id="search">
-            <SearchBox onSearch={query => console.log(query)}/>
+            <SearchBox onSearch={query => this.search(query)}/>
             <ResultList results={this.props.data} />
       </div>
     );

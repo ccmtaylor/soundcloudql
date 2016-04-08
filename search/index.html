@@ -195,7 +195,7 @@
     }
 
    React.render(
-       React.createElement(Search, {"data": results}),
+       React.createElement(Search, {"data": results, "fetcher": graphQLFetcher}),
        document.getElementById('content')
    );
   </script>
