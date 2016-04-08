@@ -26,20 +26,32 @@ class Search extends React.Component {
         }`
         this.state = {
             query,
-            q: ''
+            q: '',
+            data: {
+                searchTracks: {},
+                searchUsers: {},
+                searchPlaylists: {},
+            }
+
         }
+        this.onResult = this.onResult.bind(this);
+    }
+
+    onResult(json) {
+        console.log(json);
+        this.setState({data: json.data});
     }
 
     search(query) {
         this.state.q = query.q;
-        this.props.fetcher({query: this.state.query, variables: {q: this.state.q}}).then(json => console.log(json));
+        this.props.fetcher({query: this.state.query, variables: {q: this.state.q}}).then(json => this.onResult(json));
     }
 
   render() {
     return (
       <div id="search">
             <SearchBox onSearch={query => this.search(query)}/>
-            <ResultList results={this.props.data} />
+            <ResultList results={this.state.data} />
       </div>
     );
   }
@@ -51,13 +63,13 @@ class ResultList extends React.Component {
   render() {
     return (
             <div>
-            <Items title="Tracks" items={this.props.results.data.searchTracks} mapper={
+            <Items title="Tracks" items={this.props.results.searchTracks} mapper={
                 item => (<Item title={item.title} permalinkUrl={item.permalinkUrl} imageUrl={item.artworkUrl} />)
             } />
-            <Items title="Users" items={this.props.results.data.searchUsers} mapper={
+            <Items title="Users" items={this.props.results.searchUsers} mapper={
                 item => (<Item title={item.username} permalinkUrl={item.permalinkUrl} imageUrl={item.avatarUrl} />)
             } />
-            <Items title="Playlists" items={this.props.results.data.searchPlaylists} mapper={
+            <Items title="Playlists" items={this.props.results.searchPlaylists} mapper={
                 item => (<Item title={item.title} permalinkUrl={item.permalinkUrl} imageUrl={item.artworkUrl} />)
             } />
             </div>
@@ -67,11 +79,13 @@ class ResultList extends React.Component {
 
 class Items extends React.Component {
     render() {
-        var items = this.props.items.collection.map(item => this.props.mapper(item));
+        let items = this.props.items.collection;
+        if(!items) {return (<div />);}
+        var mapped = items.map(item => this.props.mapper(item));
         return(
                 <div className={this.props.className}>
                     <h3>{this.props.title}</h3>
-                    {items}
+                    {mapped}
                 </div>
         )
     }
@@ -106,6 +120,9 @@ class SearchBox extends React.Component {
         super(props);
         this.state = {q: ''};
         this.search = debounce(this.search, 500);
+        // http://facebook.github.io/react/docs/reusable-components.html#es6-classes
+        this.onChange = this.onChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     onChange(e) {
@@ -126,12 +143,12 @@ class SearchBox extends React.Component {
 
     render() {
         return (
-            <form className="searchBox" onSubmit={this.onSubmit.bind(this)}>
+            <form className="searchBox" onSubmit={this.onSubmit}>
                 <input
                     type="search"
                     placeholder="Search..."
                     value={this.state.q}
-                    onChange={this.onChange.bind(this)}
+                    onChange={this.onChange}
                 />
             </form>
         );
