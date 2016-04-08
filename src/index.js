@@ -13,6 +13,8 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true
 }));
 
+app.use('/search', express.static(__dirname + '/search'));
+
 app.listen(process.env.PORT, function () {
   console.log('Listening on port ' + process.env.PORT);
 });
