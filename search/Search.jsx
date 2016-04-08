@@ -40,7 +40,7 @@ class Search extends React.Component {
   render() {
     return (
       <div id="search">
-        <SearchBox />
+            <SearchBox onSearch={query => console.log(query)}/>
             <ResultList results={this.props.data} />
       </div>
     );
@@ -90,18 +90,52 @@ class Item extends React.Component {
     }
 }
 
+function debounce(fn, delay) {
+    var timer = null;
+    return function () {
+        var context = this, args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            fn.apply(context, args);
+        }, delay);
+    };
+}
+
 
 class SearchBox extends React.Component {
-  constructor(props) {
-    super(props);
 
-  }
+    constructor(props) {
+        super(props);
+        this.state = {q: ''};
+        this.search = debounce(this.search, 500);
+    }
 
-  render() {
-    return (
-        <form>
-        <input type="search"/>
-        </form>
-    );
-  }
+    onChange(e) {
+        this.setState({q: e.target.value.trim()});
+        this.search();
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+        this.search();
+    }
+
+    search() {
+        let q = this.state.q;
+        if (!q) { return; }
+        this.props.onSearch({q: q})
+    }
+
+    render() {
+        return (
+            <form className="searchBox" onSubmit={this.onSubmit.bind(this)}>
+                <input
+                    type="search"
+                    placeholder="Search..."
+                    value={this.state.q}
+                    onChange={this.onChange.bind(this)}
+                />
+            </form>
+        );
+    }
 }
