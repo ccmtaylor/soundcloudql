@@ -119,14 +119,14 @@ class SearchBox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {q: ''};
-        this.search = debounce(this.search, 500);
+        this.search = debounce(this.search, 250);
         // http://facebook.github.io/react/docs/reusable-components.html#es6-classes
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     onChange(e) {
-        this.setState({q: e.target.value.trim()});
+        this.setState({q: e.target.value});
         this.search();
     }
 
