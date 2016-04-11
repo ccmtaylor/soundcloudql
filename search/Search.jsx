@@ -62,7 +62,7 @@ class ResultList extends React.Component {
 
   render() {
     return (
-            <div>
+            <div className="resultList">
             <Items title="Tracks" items={this.props.results.searchTracks} mapper={
                 item => (<Item title={item.title} permalinkUrl={item.permalinkUrl} imageUrl={item.artworkUrl} />)
             } />
